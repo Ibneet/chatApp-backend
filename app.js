@@ -1,15 +1,20 @@
 const express = require('express');
+const bodyParser = require("body-parser");
 const http = require('http');
 const socketio = require('socket.io');
 const mongoose = require('mongoose');
 
-const { Chat } = require("./models/Chat");
+const Chat = require("./models/chat");
+const chatsRoutes = require('./routes/chats-routes');
 
 const PORT = process.env.PORT || 5000;
 
 const app = express();
+app.use(bodyParser.json());
 const server = http.createServer(app);
 const io = socketio(server);
+
+app.use('/api/chats', chatsRoutes);
 
 //Reserved events
 let ON_CONNECTION = 'connection';
