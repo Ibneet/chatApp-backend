@@ -5,6 +5,7 @@ const socketio = require('socket.io');
 const mongoose = require('mongoose');
 
 const Chat = require("./models/chat");
+const HttpError = require('./models/http-error');
 const chatsRoutes = require('./routes/chats-routes');
 
 const PORT = process.env.PORT || 5000;
@@ -15,6 +16,19 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 app.use('/api/chats', chatsRoutes);
+
+app.use((req, res, next) => {
+    const error = new HttpError('Could not find the specified route', 404);
+    throw error;
+})
+
+app.use((error, req, res, next) => {
+    if(res.headerSent){
+        return next(error);
+    }
+    res.status(error.code || 500);
+    res.json({message: error.message || "An unknown error occurred"});
+});
 
 //Reserved events
 let ON_CONNECTION = 'connection';
