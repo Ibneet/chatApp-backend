@@ -29,7 +29,7 @@ let STATUS_MESSAGE_SENT = 10002;
 
 
 
-const connect = mongoose.connect('mongodb+srv://ikshitjalan:Ikshit@17@cluster0-atrss.mongodb.net/Chat?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => { console.log('MongoDB Connected...') })
+mongoose.connect('mongodb+srv://ikshitjalan:Ikshit@17@cluster0-atrss.mongodb.net/Chat?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true }).then(() => { console.log('MongoDB Connected...') })
     .catch(err => { console.log(err) });
 
 
@@ -80,6 +80,16 @@ function onlineCheckHandler(socket, chat_user_details) {
 
 function singleChatHandler(socket, chat_message) {
     console.log('onMessage: ' + stringifyToJson(chat_message));
+
+    Chat.collection.insertOne({
+        chatID: chat_message.chatID,
+        message: chat_message.message,
+        from: chat_message.from,
+        to: chat_message.to,
+        chatType: chat_message.chatType,
+        toUserOnlineStatus: chat_message.toUserOnlineStatus,
+    }).then(console.log('Chat Saved')).catch(err => console.log);
+
     let to_user_id = chat_message.to;
     let from_user_id = chat_message.from;
     console.log(from_user_id + '=> ' + to_user_id);
