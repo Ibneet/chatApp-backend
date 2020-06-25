@@ -87,7 +87,7 @@ function singleChatHandler(socket, chat_message) {
     console.log('onMessage: ' + stringifyToJson(chat_message));
 
     Chat.collection.insertOne({
-        chatID: chat_message.chatID,
+        chatID: chat_message.from < chat_message.to? chat_message.from+chat_message.to: chat_message.to+chat_message.from,
         message: chat_message.message,
         from: chat_message.from,
         to: chat_message.to,
